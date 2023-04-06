@@ -1,0 +1,188 @@
+<!-- <!DOCTYPE html>
+<html>
+<head>
+	<title>Get Rate OTP</title>
+	<style>
+		body {
+			background-color: #f2f2f2;
+			font-family: Arial, sans-serif;
+		}
+
+		h1 {
+			color: #333;
+			font-size: 36px;
+			font-weight: bold;
+			margin: 20px 0;
+			text-align: center;
+		}
+
+		form {
+			background-color: #fff;
+			border-radius: 5px;
+			box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+			margin: 0 auto;
+			max-width: 500px;
+			padding: 20px;
+		}
+
+		label {
+			display: block;
+			font-size: 18px;
+			font-weight: bold;
+			margin-bottom: 10px;
+		}
+
+		input[type="text"], input[type="email"], input[type="password"] {
+			border: 1px solid #ccc;
+			border-radius: 5px;
+			font-size: 16px;
+			padding: 10px;
+			width: 100%;
+		}
+
+		input[type="submit"] {
+			background-color: #333;
+			border: none;
+			border-radius: 5px;
+			color: #fff;
+			cursor: pointer;
+			font-size: 18px;
+			padding: 10px;
+			width: 100%;
+		}
+
+		input[type="submit"]:hover {
+			background-color: #555;
+		}
+	</style>
+</head>
+<body>
+    
+    <img src="/static/img/logo1.png" style="height: 300px; align-self: center;">
+	
+    <p><h1>Genrate OTP</h1></p>
+	<form action="/getrateotp/" method="POST">
+		{% csrf_token %}
+		
+
+		<input type="submit" value="Genrate OTP" name="getrate otp">
+	</form>
+</body>
+</html> -->
+
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Get Rate OTP</title>
+	<style>
+		body {
+			background-color: #f2f2f2;
+			font-family: Arial, sans-serif;
+		}
+
+		h1 {
+			color: #333;
+			font-size: 36px;
+			font-weight: bold;
+			margin: 20px 0;
+			text-align: center;
+		}
+
+		label {
+			display: block;
+			font-size: 18px;
+			font-weight: bold;
+			margin-bottom: 10px;
+		}
+
+		input[type="text"] {
+			border: 1px solid #ccc;
+			border-radius: 5px;
+			font-size: 16px;
+			padding: 10px;
+			width: 75%;
+		}
+
+		input[type="submit"] {
+			background-color: #0059ff;
+			border: none;
+			border-radius: 5px;
+			color: #fff;
+			cursor: pointer;
+			font-size: 18px;
+			padding: 10px;
+			width: 100%;
+		}
+
+		input[type="submit"]:hover {
+			background-color: #0E1FFA;
+		}
+
+		.container {
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			justify-content: center;
+			min-height: 100vh;
+		}
+
+		.logo img{
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			margin-bottom: 20px;
+            border-radius: 15px;
+            transition: .3s;
+		}
+        .logo:hover {
+            transform: scale(1.05);
+            transition: transform 0.3s ease-in-out;
+        }
+
+        .logo {
+            transform: scale(1);
+            transition: transform 0.3s ease-in-out;
+        }
+
+		.logo img {
+			height: 300px;
+		}
+        .im img{
+            height: 300px;
+            width: 457px;
+            border: #fff;
+            
+        }
+
+		form {
+			background-color: #fff;
+			border-radius: 5px;
+			box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+			margin: 0 auto;
+			max-width: 500px;
+			padding: 20px;
+		}
+	</style>
+</head>
+
+<body>
+	<div class="container">
+        <div class="im">
+            <div class="logo">
+                <img src="/static/img/logoo.png">
+            </div>
+        </div>
+		<h1>Generate OTP</h1>
+		<form  method="POST">
+			{% csrf_token %}
+			<input type="submit" value="Generate OTP" name="getrate otp">
+            
+            {% if otp %}
+                <br><br>
+                <label for="otp">Generated OTP:</label>
+                <input type="text" id="otp" name="otp" value="{{ otp }}" readonly>
+            {% endif %}
+		</form>
+	</div>
+</body>
+</html>

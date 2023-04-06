@@ -1,0 +1,172 @@
+{% extends "base2.html" %}
+{% block content %}
+{% if message %}
+<script>
+ alert('{{message}}');
+</script>
+{% endif %}
+<!-- Page Header Start -->
+<div class="page-header mb-0">
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <h2>Cart</h2>
+            </div>
+            <div class="col-12">
+                <a href="">Home</a>
+                <a href="">Cart</a>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Page Header End -->
+
+
+<div class="food mt-6">
+    <div class="container">
+        <div class="cart">
+            <table>
+              <thead>
+                <tr>
+                  <th>Image</th>
+                  <th>Item</th>
+                  <th>Price</th>
+                  <th>Quantity</th>
+                  <th>Subtotal</th>
+                </tr>
+              </thead>
+              <tbody>
+                    {% for item in items %}
+                        <form method="POST">
+                            {% csrf_token %}
+                            <tr>
+                                <td><img src="/media/{{item.item.image}}" style="height: 85px;width: 50%;" alt="image"></td>
+                                <td>{{ item.item.name }}</td>
+                                <td>{{ item.item.price }}</td>
+                                <td>
+                                <div class="quantity">
+                                    <button type = submit name = "submit"class="decrement" value="1">-</button>
+                                    <input type="hidden" name="item_id" value="{{ item.item.id }}">
+                                    <input type="number" name="quantity" value="{{ item.quantity }}" min="1" onchange="updateQuantity(this)">
+                                    <button type = submit name = "submit" class="increment" value="2">+</button>
+                                </div>
+                                </td>
+                                <td>{{ item.get_total_price }} Rs /-</td>
+                                
+                            </tr>
+                        </form>
+                    {% endfor %}
+                
+                <tr>
+                    <th colspan="4">Total Price:</th>
+                    <td>{{ total_price }} Rs /-</td>
+                </tr>
+              </tbody>
+            </table>
+        </div>
+        <div>
+            <p>     </p>
+        </div>
+        <form method="POST">
+          {% csrf_token %}
+          <div style="text-align: center;">
+            <button type = submit name = "submit" id="reset-button" value="4">Reset Cart</button>
+          </div>
+          <div>
+            <p>     </p>
+          </div>
+          <div style="text-align: center;">
+            {% for item in items %}
+              <input type="hidden" name="item_id" value="{{ item.item_id }}">
+            {% endfor %}
+            <button class="btn custom-btn" button type="submit" name = "submit" value="3">Place your Order</button>
+    
+          </div>
+        </form>
+    </div>
+</div>
+<style>
+    .cart {
+      width: 100%;
+      overflow-x: auto;
+      white-space: nowrap;
+    }
+  
+    table {
+      border-collapse: collapse;
+      width: 100%;
+    }
+  
+    th, td {
+      padding: 8px;
+      text-align: left;
+      border-bottom: 1px solid #ddd;
+    }
+  
+    th {
+      background-color: #f2f2f2;
+    }
+  
+    input[type=number] {
+      width: 50px;
+      text-align: center;
+    }
+  
+    .quantity {
+      display: flex;
+    }
+  
+    .quantity button {
+      width: 30px;
+      height: 30px;
+      font-size: 18px;
+      font-weight: bold;
+      background-color: #f2f2f2;
+      border: none;
+      cursor: pointer;
+    }
+  
+    .quantity input[type=number] {
+      border: none;
+      text-align: center;
+      background-color: #f2f2f2;
+      font-size: 16px;
+      font-weight: bold;
+    }
+  
+    .quantity input[type=number]:focus {
+      outline: none;
+    }
+
+    #reset-button {
+       /* Change the text color */
+      /* Add any other styling you want */
+      padding: 12px 25px;
+      font-family: 'Nunito', sans-serif;
+      font-size: 16px;
+      font-weight: 600;
+      background-color: #0E1FFA; /* Change the background color */
+      color: white;
+      border: 2px solid #0059ff;
+      border-radius: 5px;
+      transition: .5s;
+    }
+    #reset-button:hover {
+      color: #0059ff;
+      background: transparent;/* Change the text color */
+      /* Add any other styling you want */
+    }
+</style>
+  
+<script>
+    function updateQuantity(element, change=0) {
+      var input = element.parentElement.querySelector('input[type=number]');
+      var currentValue = parseInt(input.value);
+      var newValue = currentValue + change;
+      if (newValue < 1) {
+        newValue = 1;
+      }
+      input.value = newValue;
+    }
+</script>
+{% endblock %}

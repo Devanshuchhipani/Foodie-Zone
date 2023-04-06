@@ -1,0 +1,152 @@
+{% extends "base2.html" %}
+{% block content %}
+
+{% if status %}
+<script>
+    alert("{{ status }}");
+</script>
+{% endif %}
+
+{% if mess %}
+<script>
+    alert("{{mess}}");
+</script>
+{% endif %}
+
+
+
+<!-- Page Header Start -->
+<div class="page-header mb-0">
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <h2>Menu</h2>
+            </div>
+            <div class="col-12">
+                <a href="">Home</a>
+                <a href="">Menu</a>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Page Header End -->
+<!-- Food Start -->
+<div class="food mt-0">
+    <div class="container">
+        <h2 class="my-3">Domino's Pizza</h2>
+        <div class="row align-items-center">
+            {% for  m in item1 %}
+                <div class="col-md-4 mx-auto">
+                    <div class="food-item">
+                        <form method="POST">
+                            {% csrf_token %}                   
+                            <a ><img src="/media/{{m.image}}" style="height: 300px;width: 100%;" alt="image"></a>
+                            <h2 class="my-3">{{m.name}}</h2>
+                            <p>
+                            {{m.ingredients}}
+                            </p>
+                            {{m.id}}
+                            <input type="hidden" name="item_id" value="{{ m.id }}">
+                            <input type="hidden" name="quanitiy" value="1">
+                            {% if m.is_available %}
+                                <p>
+                                    <button type="submit" class="btn custom-btn" button type="submit">Add to cart</button>
+                                </p>
+                                <p class="text-danger"> Price : {{m.price}} Rs/-</p>
+                            {% else %}
+                                <p class="text-danger">Not Available for delivery!</p>
+                            
+                            {% endif %}
+                        </form>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+        <h2 class="my-3">McDonald's</h2>
+        <div class="row align-items-center">
+            {% for m in item2 %}
+                <div class="col-md-4 mx-auto">
+                    <div class="food-item">
+                        <form method="POST">
+                            {% csrf_token %}
+                            <a ><img src="/media/{{m.image}}" style="height: 300px;width: 100%;" alt="image"></a>
+                            <h2 class="my-3">{{m.name}}</h2>
+                            <p>
+                                {{m.ingredients}}
+                            </p>
+                            <input type="hidden" name="item_id" value="{{ m.id }}">
+                            <input type="hidden" name="quanitiy" value="1">
+                            {% if m.is_available %}
+                                <p>
+                                    <button type="submit" class="btn custom-btn" button type="submit">Add to cart</button>
+                                </p>
+                                <p class="text-danger"> Price : {{m.price}} Rs/-</p>
+                            {% else %}
+                                <p class="text-danger">Not Available for delivery!</p>
+                            {% endif %}
+                        </form>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+        <h2 class="my-3">La Pino'z Pizza</h2>
+        <div class="row align-items-center">
+            {% for m in item3 %}
+                <div class="col-md-4 mx-auto">
+                    <div class="food-item">
+                        <form method="POST">
+                            {% csrf_token %}
+                            <a ><img src="/media/{{m.image}}" style="height: 300px;width: 100%;" alt="image"></a>
+                            <h2 class="my-3">{{m.name}}</h2>
+                            <p>
+                                {{m.ingredients}}
+                            </p>
+                            <input type="hidden" name="item_id" value="{{ m.id }}">
+                            <input type="hidden" name="quanitiy" value="1">
+                            {% if m.is_available %}
+                                <p>
+                                    <button type="submit" class="btn custom-btn" button type="submit">Add to cart</button>
+                                </p>
+                                <p class="text-danger"> Price : {{m.price}} Rs/-</p>
+                            {% else %}
+                                <p class="text-danger">Not Available for delivery!</p>
+                                
+                            {% endif %}
+                        </form>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+        <h2 class="my-3">Hocco eatry</h2>
+        <div class="row align-items-center">
+            {% for m in item4 %}
+                <div class="col-md-4 mx-auto">
+                    <div class="food-item">
+                        <form method="POST">
+                            {% csrf_token %}
+                            <a ><img src="/media/{{m.image}}" style="height: 300px;width: 100%;" alt="image"></a>
+                            <h2 class="my-3">{{m.name}}</h2>
+                            <p>
+                                {{m.ingredients}}
+                            </p>
+                            <input type="hidden" name="item_id" value="{{ m.id }}">
+                            <input type="hidden" name="quanitiy" value="1">
+                            {% if m.is_available %}
+                                <p>
+                                    <button type="submit" class="btn custom-btn" button type="submit">Add to cart</button>
+                                </p>
+                                <p class="text-danger"> Price : {{m.price}} Rs/-</p>
+                            {% else %}
+                                <p class="text-danger">Not Available for delivery!</p>
+                                
+                            {% endif %}
+                        </form>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<!-- Food End -->
+{% endblock %}

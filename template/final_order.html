@@ -1,0 +1,85 @@
+{% extends "base2.html" %}
+{% block content %}
+{% if message %}
+<script>
+ alert('{{message}}');
+</script>
+{% endif %}
+<!-- Page Header Start -->
+<div class="page-header mb-0">
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <h2> Order Details </h2>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="food mt-6">
+    <div class="container">
+        <div class="cart">
+            <table>
+              <thead>
+                <tr>
+                  <th>Image</th>
+                  <th>Item</th>
+                  <th>Quantity</th>
+                  <th>Subtotal</th>
+                </tr>
+              </thead>
+              <tbody>
+                    {% for item in c %}
+                        <form method="POST">
+                            {% csrf_token %}
+                            <tr>
+                                <td><img src="/media/{{item.item.image}}" style="height: 85px;width: 50%;" alt="image"></td>
+                                <td>{{ item.item.name }}</td>
+                                <td>{{ item.item.price }}</td>
+                                <td>
+                                <div class="quantity">
+                                    <button type = submit name = "submit"class="decrement" value="1">-</button>
+                                    <input type="hidden" name="item_id" value="{{ item.item.id }}">
+                                    <input type="number" name="quantity" value="{{ item.quantity }}" min="1" onchange="updateQuantity(this)">
+                                    <button type = submit name = "submit" class="increment" value="2">+</button>
+                                </div>
+                                </td>
+                                <td>{{ item.get_total_price }} Rs /-</td>
+                                
+                            </tr>
+                        </form>
+                    {% endfor %}
+                
+                <tr>
+                    <th colspan="4">Total Price:</th>
+                    <td>{{ total_price }} Rs /-</td>
+                </tr>
+              </tbody>
+            </table>
+        </div>
+        <div>
+            <p>     </p>
+        </div>
+        <form method="POST">
+          {% csrf_token %}
+          <div style="text-align: center;">
+            <button type = submit name = "submit" id="reset-button" value="4">Reset Cart</button>
+          </div>
+          <div>
+            <p>     </p>
+          </div>
+          <div style="text-align: center;">
+            {% for item in items %}
+              <input type="hidden" name="item_id" value="{{ item.item_id }}">
+            {% endfor %}
+            <button class="btn custom-btn" button type="submit" name = "submit" value="3">Place your Order</button>
+    
+          </div>
+        </form>
+    </div>
+</div>
+
+<script type="text/javascript">
+    window.open('http://127.0.0.1:8000/genrate_otp', '_blank');
+</script>
+{% endblock %}
