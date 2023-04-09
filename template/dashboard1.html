@@ -150,14 +150,18 @@
                                             <div class="col-md-12">
                                                 <p class="my-0"><small>Order ID: {{order.id}}</small></p>
                                                 <p class="font-italic"><small>{{order.order_time}}</small></p>
-                                             </div>
-                                            {% for item in order.cart_item.item.all %}
+                                            </div>
+                                            {% for cart_item_item in order.cart_item.cartitem_item_set.all %}
                                                 <div class="col-md-4">
-                                                    <img src="/media/{{ item.image }}" style="height:70px" class="rounded">
+                                                    <img src="/media/{{ cart_item_item.item.image }}" style="height:70px" class="rounded">
                                                 </div>
-                                                <div class="col-md-8">
-                                                    <h4>{{ item.name }}</h4>
-                                                    <p> {{ item.price}} Rs /-</p>
+                                                <div class="col-md-4">
+                                                    <h4>{{ cart_item_item.item.name }}</h4>
+                                                    <p>{{ cart_item_item.item.price }} Rs /-</p>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <h6>Quantity</h6>
+                                                    <p>{{ cart_item_item.quantity }}</p>
                                                 </div>
                                             {% endfor %}
                                             <div class="col-md-4"> Total Amount : </div>
