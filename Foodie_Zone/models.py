@@ -91,10 +91,10 @@ def generate_unique_key():
 class Cart(models.Model):
     id1 = models.IntegerField(primary_key=True,unique=True)
     session_key = models.CharField(max_length=32,blank=True, null=True, unique=True)
-    created_at = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateTimeField(auto_now_add=True,null=True)
 
     def __str__(self):
-        return f"Cart id1 = {self.id1} (session {self.session_key})"
+        return f"Cart id1={self.id1}  session={self.session_key}"
     
 class CartItem(models.Model):
     cart1 = models.ForeignKey(Cart, on_delete=models.CASCADE)

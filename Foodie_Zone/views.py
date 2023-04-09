@@ -9,7 +9,7 @@ from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
 import json
 
-count=7
+count=3
 b1 = 1
 re = 0
 # Create your views here.
@@ -147,6 +147,8 @@ def dashboard1(request):
 
     order = Order.objects.filter(restaurant = profile)
     context['orders'] = order
+
+    
 
     if "update_profile" in request.POST:
         print("file=",request.FILES)
@@ -393,7 +395,8 @@ def menu2(request):
     context['item3'] = item3
     context['item4'] = item4
     #print(context)
-
+    s_key = request.session.session_key
+    print(s_key)
     if request.method == 'POST':
         
         item__id = request.POST.get(f"item_id")
@@ -486,6 +489,9 @@ def menu2(request):
     context['status'] =  status
 
     return render(request,'menu2.html',context)
+
+
+
 
 def cart(request):
     context={}
@@ -878,14 +884,17 @@ def payment(request):
             order.payment_status=2
             order.status=2
             order.save()
+            return redirect('/dashboard2')
+        elif payment_method == 'cod':
+            order.payment_status=1
+            order.status=2
+            order.save()
+            return redirect('/dashboard2')
         else:
             context['error'] = 'payment failed'
             return render(request,'dashboard2.html',context)
 
-        if payment_method == 'cod':
-            order.payment_status=2
-            order.save()
-
+            
         return redirect('/dashboard2')
         
 
