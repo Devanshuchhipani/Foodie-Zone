@@ -30,6 +30,7 @@ urlpatterns = [
     path('check_user_exists/',views.check_user_exists,name="check_user_exist"),
     path('login/', views.signin, name='login'),
     path('dashboard1/', views.dashboard1, name='dashboard1'),
+    path('order1/', views.order1, name='order1'),
     path('logout/', views.user_logout, name='logout'),
     path('index1/',views.index1,name="index1"),
     path('about1/',views.about1,name="about1"),
@@ -44,4 +45,8 @@ urlpatterns = [
     path('cart/',views.cart,name="cart"),
     path('final_order/',views.final_order,name="final_order"),
     path('genrate_otp/',views.genrate_otp,name="genrate_otp"),
+    path('payment/',views.payment,name="payment"),
+
+    path('map/', views.map_view, name='map_view'),
+    
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -1,11 +1,12 @@
 {% extends "base2.html" %}
-{% block content %}
+{% block content %}<!-- 
+
 {% if message %}
 <script>
  alert('{{message}}');
 </script>
 {% endif %}
-<!-- Page Header Start -->
+
 <div class="page-header mb-0">
     <div class="container">
         <div class="row">
@@ -25,33 +26,21 @@
                   <th>Image</th>
                   <th>Item</th>
                   <th>Quantity</th>
-                  <th>Subtotal</th>
                 </tr>
               </thead>
               <tbody>
                     {% for item in c %}
-                        <form method="POST">
-                            {% csrf_token %}
                             <tr>
                                 <td><img src="/media/{{item.item.image}}" style="height: 85px;width: 50%;" alt="image"></td>
                                 <td>{{ item.item.name }}</td>
-                                <td>{{ item.item.price }}</td>
                                 <td>
-                                <div class="quantity">
-                                    <button type = submit name = "submit"class="decrement" value="1">-</button>
-                                    <input type="hidden" name="item_id" value="{{ item.item.id }}">
-                                    <input type="number" name="quantity" value="{{ item.quantity }}" min="1" onchange="updateQuantity(this)">
-                                    <button type = submit name = "submit" class="increment" value="2">+</button>
-                                </div>
+                                    {{ item.quantity }}
                                 </td>
-                                <td>{{ item.get_total_price }} Rs /-</td>
-                                
                             </tr>
-                        </form>
+                        
                     {% endfor %}
-                
                 <tr>
-                    <th colspan="4">Total Price:</th>
+                    <th colspan="2">Total Price:</th>
                     <td>{{ total_price }} Rs /-</td>
                 </tr>
               </tbody>
@@ -63,23 +52,237 @@
         <form method="POST">
           {% csrf_token %}
           <div style="text-align: center;">
-            <button type = submit name = "submit" id="reset-button" value="4">Reset Cart</button>
+            <button type = submit name = "submit" id="reset-button" value="4">pay Now</button>
           </div>
           <div>
             <p>     </p>
           </div>
-          <div style="text-align: center;">
-            {% for item in items %}
-              <input type="hidden" name="item_id" value="{{ item.item_id }}">
-            {% endfor %}
-            <button class="btn custom-btn" button type="submit" name = "submit" value="3">Place your Order</button>
-    
-          </div>
         </form>
     </div>
 </div>
+<style>
+  .cart {
+    width: 100%;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
 
-<script type="text/javascript">
+  table {
+    border-collapse: collapse;
+    width: 100%;
+  }
+
+  th, td {
+    padding: 8px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+  }
+
+  th {
+    background-color: #f2f2f2;
+  }
+
+  input[type=number] {
+    width: 50px;
+    text-align: center;
+  }
+
+  #reset-button {
+     /* Change the text color */
+    /* Add any other styling you want */
+    padding: 12px 25px;
+    font-family: 'Nunito', sans-serif;
+    font-size: 16px;
+    font-weight: 600;
+    background-color: #0E1FFA; /* Change the background color */
+    color: white;
+    border: 2px solid #0059ff;
+    border-radius: 5px;
+    transition: .5s;
+  }
+  #reset-button:hover {
+    color: #0059ff;
+    background: transparent;/* Change the text color */
+    /* Add any other styling you want */
+  }
+</style>
+
+ <script type="text/javascript">
     window.open('http://127.0.0.1:8000/genrate_otp', '_blank');
+</script> 
+-->
+
+
+
+{% if message %}
+<script>
+ alert('{{message}}');
 </script>
+{% endif %}
+<!-- Page Header Start -->
+<div class="page-header mb-0">
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <h2> Order Details </h2>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-6" style="margin-left: 5px; margin-right: 5px;">
+    <div class="col-md-6">
+        <div class="food">
+          <div class="container">
+                <div class="cart">
+                  <h3>My Order : </h3>
+                    <table>
+                      <thead>
+                        <h5>Order ID : #{{ order.id}}</h5>
+                        <tr>
+                          <th>Image</th>
+                          <th>Item</th>
+                          <th>Quantity</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                            {% for item in c %}
+                                    <tr>
+                                        <td><img src="/media/{{item.item.image}}" style="height: 85px;width: 55%;" alt="image"></td>
+                                        <td>{{ item.item.name }}</td>
+                                        <td>
+                                            {{ item.quantity }}
+                                        </td>
+                                    </tr>
+                            {% endfor %}
+                        <tr>
+                            <th colspan="2">Total Price:</th>
+                            <th>{{ total_price }} Rs /-</th>
+                        </tr>
+                        <h5>Order Time : {{ order.order_time}}</h5>
+                        <h5>Order Status : {{ order.get_status_display }}</h5>
+                        <h5>Order Payment Status : {{ order.get_payment_status_display }}</h5>
+
+                      </tbody>
+                    </table>
+                </div>
+                <div>
+                    <p>     </p>
+                </div>
+                <form method="POST">
+                  {% csrf_token %}
+                  <div style="text-align: center;">
+                    <input type="hidden" name="amount" value="{{ total_price }}">
+                    <button type="submit" name="submit" id="reset-button" value="2">Pay Now</button>
+                  </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="food">
+            <div class="container">
+                <h3>Delivery Address</h3>
+                <form method="POST">
+                    {% csrf_token %}
+                    
+                    {% if order.name %}
+                      <div class="form-group">
+                        <label for="name">Name:</label>
+                        <input type="text" class="form-control" id="name" name="name" value="{{order.name}}" required>
+                      </div>
+                    {% else %}
+                      <div class="form-group">
+                        <label for="name">Name:</label>
+                        <input type="text" class="form-control" id="name" name="name" value="{{order.customer.customer_name}}" required>
+                      </div>
+                    {% endif %}
+                    {% if order.mo_no %}
+                      <div class="form-group">
+                          <label for="phone">Phone:</label>
+                          <input type="text" class="form-control" id="phone" name="phone" value="{{ order.mo_no }}" required>
+                      </div>
+                    {% else %}
+                      <div class="form-group">
+                        <label for="phone">Phone:</label>
+                        <input type="text" class="form-control" id="phone" name="phone" value="{{ order.customer.mobile_no }}" required>
+                      </div>
+                    {% endif %}
+                    {% if order.add %}
+                      <div class="form-group">
+                          <label for="address">Address:</label>
+                          <textarea class="form-control" id="address" name="address"  rows="3" required>{{ order.add }}</textarea>
+                      </div>
+                    {% else %}
+                      <div class="form-group">
+                        <label for="address">Address:</label>
+                        <textarea class="form-control" id="address" name="address" rows="3" required>{{ order.customer.address }}</textarea>
+                      </div>
+                    {% endif %}
+                    <div style="text-align: center;">
+                        <button type="submit" id="reset-button" name="submit" value="1" class="btn btn-primary">Submit</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+  .cart {
+    width: 100%;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+
+  table {
+    border-collapse: collapse;
+    width: 100%;
+  }
+  h3{
+    color: #000;
+  }
+  h5{
+    color: #000000e5;
+  }
+
+  th, td {
+    color: #000000bb;
+    padding: 8px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+    font-weight: bold;
+  }
+
+  th {
+    background-color: #f2f2f2;
+  }
+
+  input[type=number] {
+    width: 50px;
+    text-align: center;
+  }
+  label{
+    font-size: 20px;
+    color: #000000e5;
+  }
+
+  #reset-button {
+    padding: 12px 25px;
+    font-family: 'Nunito', sans-serif;
+    font-size: 16px;
+    font-weight: 600;
+    background-color: #0E1FFA; /* Change the background color */
+    color: white;
+    border: 2px solid #0059ff;
+    border-radius: 5px;
+    transition: .5s;
+  }
+  #reset-button:hover {
+    color: #0059ff;
+    background: transparent;/* Change the text color */
+    /* Add any other styling you want */
+  }
+</style>
+
 {% endblock %}

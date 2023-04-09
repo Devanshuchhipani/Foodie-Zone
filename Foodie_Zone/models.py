@@ -135,15 +135,16 @@ class Payment(models.Model):
 
 class Order(models.Model):
     STAT_CHOICES = (
-        ('1', 'Ordered'),
-        ('2', 'In kitchen'),
-        ('3', 'Out for delivery'),
-        ('4', 'Delivered')
+        ('1', 'Ordering'),
+        ('2', 'Ordered'),
+        ('3', 'In kitchen'),
+        ('4', 'Out for delivery'),
+        ('5', 'Delivered')
     )
 
     PAY_CHOICES = (
         ('1', 'Pending'),
-        ('2', 'Payment Done')
+        ('2', 'Paid')
     )
 
     customer = models.ForeignKey(Customer, on_delete=models.PROTECT)
@@ -153,11 +154,13 @@ class Order(models.Model):
     order_time = models.DateTimeField(auto_now_add=True)
     status = models.CharField(max_length=1, choices=STAT_CHOICES, default='1')
     payment_status = models.CharField(max_length=1, choices=PAY_CHOICES, default='1')
-    add = models.TextField(max_length=100)
+    add = models.TextField(max_length=100,null=True)
+    name = models.CharField(max_length=50,null=True)
+    mo_no = models.IntegerField(null=True)
+
 
     def __str__(self):
-        return f'Order {self.id} by {self.customer} at {self.order_time} ({self.get_status_display()}, {self.get_payment_status_display()})'
-
+        return f'Order {self.id} by {self.customer} at {self.order_time} ({self.get_status_display()}, {self.get_payment_status_display()}) - Delivery address: {self.add}, Name: {self.name}, Phone number: {self.mo_no}'
 
     
     

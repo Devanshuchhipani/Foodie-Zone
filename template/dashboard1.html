@@ -144,28 +144,67 @@
 
                              <ul class="list-group">
                                 {% for order in orders %}
-                                <a href="{% url 'dish' id=order.item.id %}">
+                                
                                     <li class="list-group-item list-group-item-action">
                                         <div class="row">
-                                            <div class="col-md-2">
-                                                <img src="/media/{{order.item.image}}" style="height:70px" class="rounded">
-                                            </div>
-                                             <div class="col-md-8">
-                                                <h4>{{order.item.name}}</h4>
-                                                <p>&dollar; {{order.item.discounted_price}}</p>
-                                                <p class="my-0"><small>INVOICE ID: {{order.invoice_id}}</small></p>
-                                                <p class="font-italic"><small>{{order.ordered_on}}</small></p>
-                                             </div>  
-                                             <div class="col-md-2">
-                                                 {% if order.status == True %}
-                                                    <button class="btn btn-success btn-sm">Completed</button>
-                                                 {% else %}
-                                                 <button class="btn btn-danger btn-sm">Cancelled</button>
-                                                 {% endif %}
+                                            <div class="col-md-12">
+                                                <p class="my-0"><small>Order ID: {{order.id}}</small></p>
+                                                <p class="font-italic"><small>{{order.order_time}}</small></p>
                                              </div>
+                                            {% for item in order.cart_item.item.all %}
+                                                <div class="col-md-4">
+                                                    <img src="/media/{{ item.image }}" style="height:70px" class="rounded">
+                                                </div>
+                                                <div class="col-md-8">
+                                                    <h4>{{ item.name }}</h4>
+                                                    <p> {{ item.price}} Rs /-</p>
+                                                </div>
+                                            {% endfor %}
+                                            <div class="col-md-4"> Total Amount : </div>
+                                            <div class="col-md-8"> {{ order.paym.amount }} Rs /-</div>
+                                            <div>
+                                                <p>
+                                                            
+                                                </p>
+                                            </div>
+                                            <div class="col-md-2">Order Status</div>
+                                            <div class="col-md-2">
+                                                {% if order.get_status_display != "Ordering" %}
+                                                    <button class="btn btn-success btn-sm"> {{ order.get_status_display }}</button>
+                                                {% else %}
+                                                    <button class="btn btn-danger btn-sm">Cancelled</button>
+                                                {% endif %}
+                                            </div>
+                                            <div>
+                                                <p>
+                                                    
+                                                </p>
+                                            </div>
+                                            <div class="col-md-2">Payment Status</div>
+                                            <div class="col-md-2">
+                                                {% if order.get_payment_status_display != "Pending" %}
+                                                    <button class="btn btn-success btn-sm"> {{ order.get_payment_status_display }} </button>
+                                                {% else %}
+                                                    <button class="btn btn-danger btn-sm">{{ order.get_payment_status_display }}</button>
+                                                {% endif %}
+                                            </div>
+                                            <div>
+                                                <p>
+                                                    
+                                                </p>
+                                            </div>
+                                            <div class="col-md-2">Payment Mode</div>
+                                            <div class="col-md-2">
+                                                
+                                                {% if order.paym.get_payment_mode_display == "Online Payment"  %}
+                                                    <button class="btn btn-success btn-sm"> {{ order.paym.get_payment_mode_display }} </button>
+                                                {% elif order.paym.get_payment_mode_display == "COD" %}
+                                                    <button class="btn btn-success btn-sm"> {{ order.paym.get_payment_mode_display }} </button>
+                                                {% endif %}
+                                             </div> 
                                         </div>
                                     </li>
-                                    </a>
+                                    
                                 {% endfor %}
                              </ul>
                             </div>
@@ -197,5 +236,13 @@
 
         }
     }
+
+    $(document).ready(function() {
+        $('form').submit(function(event) {
+            event.preventDefault(); // Prevent form submission
+            var status = $('#order_status').val(); // Get selected value from dropdown
+            // Do something with the selected value, e.g. send an AJAX request to update the order status
+        });
+    });
 </script>
 {% endblock %}

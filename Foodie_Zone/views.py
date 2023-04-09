@@ -1,29 +1,19 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.models import User
-from django.http import HttpResponse,JsonResponse, HttpResponseRedirect
+from django.http import HttpResponse,JsonResponse, HttpResponseRedirect, HttpResponseBadRequest
 from django.contrib.auth import login, authenticate, logout, get_user_model 
 from Foodie_Zone.models import *
 from django.core.exceptions import ObjectDoesNotExist
 from django.utils import timezone
+from django.conf import settings
+from django.core.exceptions import ImproperlyConfigured
+import json
 
-count=4
+count=7
 b1 = 1
 re = 0
 # Create your views here.
 def index(request):
-    #context ={}
-    #cats = Category.objects.all().order_by('name')
-    #context['categories'] = cats
-    # print()
-    #dishes = []
-    #for cat in cats:
-    #    dishes.append({
-     #       'cat_id':cat.id,
-     #       'cat_name':cat.name,
-     #       'cat_img':cat.image,
-     #       'items':list(cat.dish_set.all().values())
-     #   })
-    #context['menu'] = dishes
     return render(request,'index.html')
 
 def about(request):
@@ -121,7 +111,12 @@ def signin(request):
         # print(profile)
         
         usr = get_user_model()
-        def_user_id = usr.objects.get(email = email1).id
+
+        try:
+            def_user_id = usr.objects.get(email = email1).id
+        except usr.DoesNotExist:
+            context['message'] = f"user does not exist"
+            return render(request,'login.html',context) 
         print(def_user_id)
 
         u1 = Customer.objects.filter(user_id = def_user_id )
@@ -149,6 +144,9 @@ def dashboard1(request):
     #fetch login user's details
     profile = Restaurant.objects.get(user__id=request.user.id)
     context['profile'] = profile
+
+    order = Order.objects.filter(restaurant = profile)
+    context['orders'] = order
 
     if "update_profile" in request.POST:
         print("file=",request.FILES)
@@ -183,8 +181,56 @@ def dashboard1(request):
 
     return render(request, 'dashboard1.html',context)
 
+def order1(request):
+    context={}
+    login_user = get_object_or_404(User, id = request.user.id)
+    #fetch login user's details
+    profile = Restaurant.objects.get(user__id=request.user.id)
+    context['profile'] = profile
+
+    order = Order.objects.filter(restaurant = profile)
+    context['orders'] = order
+    print("h1")
+
+    if request.method == "POST":
+        print("h2")
+        
+        if request.POST.get("submit") == "1":
+
+            status = request.POST.get("order_status")
+            orderid = request.POST.get("order_id")
+            print("h3")
+            Od = Order.objects.get(id = orderid)
+            
+            Od.status= status
+            Od.save()
+
+        if request.POST.get("submit") == "2":
+
+            status = request.POST.get("payment_status")
+            orderid = request.POST.get("order_id")
+            print("h3")
+            Od = Order.objects.get(id = orderid)
+            
+            Od.payment_status= status
+            Od.save()
+        
+
+    return render(request, 'order1.html',context)
+
 
 def user_logout(request):
+    order_id = request.session.get('order')
+
+    if order_id:
+        print(order_id)
+        del request.session['order']
+
+    p = request.session.get('paymnet')
+
+    if p:
+        print(p)
+        del request.session['payment']
     logout(request)
     return HttpResponseRedirect('/')
 
@@ -289,6 +335,16 @@ def dashboard2(request):
     #fetch login user's details
     profile = Customer.objects.get(user__id=request.user.id)
     context['profile'] = profile
+    print(profile)
+    order = Order.objects.filter(customer = profile)
+    context['orders'] = order
+
+    # ie = order.paym
+    # payment = Payment.objects.filter(id = ie)
+
+    # context['payment'] = 
+    #order.paym.amount
+    
 
     if "update_profile" in request.POST:
         print("file=",request.FILES)
@@ -385,14 +441,18 @@ def menu2(request):
         print("a : ")
         print(a)
 
-        try:
-            cart = Cart.objects.get(session_key=s_key)
-        except Cart.DoesNotExist :
-            cart = Cart(session_key=s_key)
-            cart.save()
-        customer = Customer.objects.get(user__id=request.user.id)
+        # try:
+        #     cart = Cart.objects.get(session_key=s_key)
+        # except Cart.DoesNotExist :
+        #     cart = Cart(session_key=s_key)
+        #     cart.save()
 
-        cart_item1, created = CartItem.objects.get_or_create(cart1=cart, Cust=customer )
+        cart, created = Cart.objects.get_or_create(session_key=s_key)
+        
+        customer = Customer.objects.get(user__id=request.user.id)
+        customer.save()
+
+        cart_item1, created = CartItem.objects.get_or_create(cart1=cart, Cust=customer)
         cart_item1.save()
         cart_item2 = CartItem_Item.objects.filter(cart_item=cart_item1, item=items).first()
         if cart_item2:
@@ -660,22 +720,23 @@ def cart(request):
             print("r2")
             print(r2)
 
-            try:
-                ord1 = Order.objects.get(customer=c, restaurant=r2, cart_item=cart_item1)
-            except Cart.DoesNotExist :
+            ord1 = Order.objects.filter(customer=c, restaurant=r2, cart_item=cart_item1).first()
+            if ord1 is None:
                 ord1 = Order(customer=c, restaurant=r2, cart_item=cart_item1)
-                ord1.save()
-            
-            ord1.order_time=timezone.now()
+            ord1.order_time = timezone.now()
             ord1.save()
 
-            context['order'] = ord1
-            ct = ord1.cart_item
-            ct1 = ct.cart1.id1
+            request.session['order'] = ord1.id
+            # context['order'] = ord1
+            # ct = ord1.cart_item
+            # ct1 = ct.cart1.id1
 
-            ct2 = CartItem_Item.objects.filter(cart_item_id = ct1)
-            context['c']=ct2
-            return redirect('/final_order/',context)
+            # ct2 = CartItem_Item.objects.filter(cart_item_id = ct1)
+            # print("ct2")
+            # print(ct2)
+            # context['c'] = ct2
+
+            return redirect('/final_order/')
 
     return render(request,'cart.html',context)
 
@@ -684,9 +745,81 @@ def setb1():
     b1 =1
 
 def final_order(request):
-
+    context = {}
+    order_id = request.session.get('order')
     
-    return render(request,'final_order.html')
+    if request.method == 'POST':
+        print("hello")
+
+        if request.POST.get('submit') == "1":
+
+            print("hi")
+            nm = request.POST.get("name")
+            ph = request.POST.get("phone")
+            ad = request.POST.get("address")
+
+            order = Order.objects.get(id=order_id)
+
+            order.name = nm
+            order.mo_no = ph
+            order.add = ad
+            print(nm)
+            print(ph)
+            print(ad)
+
+            order.save()
+
+        if request.POST.get('submit') == "2":
+
+            print("h")
+            am = request.POST.get("amount")
+            print(am)
+            
+            order = Order.objects.get(id=order_id)
+            pay = Payment.objects.get_or_create(customer = order.customer , amount =am)
+            print("pay")
+            print(pay)
+            order.paym = pay[0]
+
+            order.save()
+            p = pay[0].id
+            
+            request.session['payment'] = p
+            return redirect('/payment')
+
+    if order_id:
+        # Retrieve the Order object from the database
+        order = Order.objects.get(id=order_id)
+
+        # Remove the order from the session
+        #del request.session['order']
+        ct = order.cart_item
+        ct1 = ct.id
+
+        ct2 = CartItem_Item.objects.filter(cart_item_id = ct1).all()
+        print("ct2")
+        print(ct2)
+
+        total_price = 0
+        for item in ct2:
+            total_price += item.get_total_price()
+
+        
+
+        print("total_price")
+        print(total_price)
+        context['total_price'] = total_price
+
+        context['c'] = ct2
+
+        cu = order.customer.customer_name
+        cadd = order.customer.address
+        cm = order.customer.mobile_no
+
+        print(order)
+        context['order'] = order
+            
+    return render(request,'final_order.html',context)
 
 import random
 
@@ -701,9 +834,59 @@ def genrate_otp(request):
     context ={}
     
     if request.method == "POST":
+        print("hi")
         st = generate_otp1()
         print(st)
+        request.session['otp'] = st
         context['otp'] = st
-
+        context['otp_generated'] = True
+        return render(request,'genrate_otp.html',context)
+    
     
     return render(request,'genrate_otp.html',context)
+
+def map_view(request):
+
+    context = {
+        'GOOGLE_MAPS_API_KEY': settings.GOOGLE_MAPS_API_KEY,
+    }
+    return render(request,'map.html',context)
+
+def payment(request):
+
+    context = {}
+    order_id = request.session.get('order')
+    order = Order.objects.get(id=order_id)
+    pay_id = request.session.get('payment')
+    payment = Payment.objects.get(id=pay_id)
+
+    otp = request.session.get('otp')
+    
+    context['order'] = order
+    context['payment'] = payment
+
+    if request.method == "POST":
+        
+        payment_method = request.POST.get('payment_method')
+        otp1 = request.POST.get('otp')
+        
+        if payment_method == 'online' and not otp:
+            context['error'] = 'Please enter OTP.'
+            return render(request, 'payment.html', context)
+        
+        if otp1 == otp:
+            order.payment_status=2
+            order.status=2
+            order.save()
+        else:
+            context['error'] = 'payment failed'
+            return render(request,'dashboard2.html',context)
+
+        if payment_method == 'cod':
+            order.payment_status=2
+            order.save()
+
+        return redirect('/dashboard2')
+        
+
+    return render(request,'payment.html',context)

@@ -1,0 +1,142 @@
+{% extends 'base1.html' %}
+{% block content %}
+{% if message %}
+<script>
+ alert('{{message}}');
+</script>
+{% endif %}
+<div class="page-header mb-0">
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <h2>Orders</h2>
+            </div>
+            <div class="col-12">
+                <a href="">Home</a>
+                <a href="">Orders</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="col">
+    <div class="food">
+        <div class="container">
+            <ul class="list-group">
+                {% for order in orders %}
+                
+                    <li class="list-group-item list-group-item-action">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <p class="my-0"><small>Order ID: {{order.id}}</small></p>
+                                <p class="font-italic"><small>{{order.order_time}}</small></p>
+                             </div>
+                            {% for item in order.cart_item.item.all %}
+                                <div class="col-md-4">
+                                    <img src="/media/{{ item.image }}" style="height:70px" class="rounded">
+                                </div>
+                                <div class="col-md-8">
+                                    <h4>{{ item.name }}</h4>
+                                    <p> {{ item.price}} Rs /-</p>
+                                </div>
+                            {% endfor %}
+                            <div class="col-md-12">
+                                <p>
+                                            
+                                </p>
+                            </div>
+                            <div class="col-md-4"> Total Amount : </div>
+                            <div class="col-md-8"> {{ order.paym.amount }} Rs /-</div>
+                            <div class="col-md-12">
+                                <p>
+                                            
+                                </p>
+                            </div>
+                            <div class="col-md-4">Order Status:</div>
+                            <div class="col-md-4">
+                                {% if order.get_status_display == "Ordering" %}
+                                    <button class="btn btn-danger btn-sm"> {{ order.get_status_display }}</button>
+                                {% else %}
+                                    <form method="POST">
+                                        {% csrf_token %}
+                                        
+                                        <div class="form-group">
+                                            <input type="hidden" name="order_id" value="{{ order.id }}">
+                                        </div>
+                                        
+                                        <div class="form-group">
+                                            <select class="form-control" name="order_status" id="order_status">
+                                                <option value="Ordering" {% if order.get_status_display == 'Ordering' %}selected{% endif %} >Ordering</option>
+                                                <option value="Ordered" {% if order.get_status_display == 'Ordered' %}selected{% endif %}>Ordered</option>
+                                                <option value="In kitchen"{% if order.get_status_display == 'In kitchen' %}selected{% endif %}>In kitchen</option>
+                                                <option value="Out for delivery" {% if order.get_status_display == 'Out for delivery' %}selected{% endif %}>Out for delivery</option>
+                                                <option value="Delivered" {% if order.get_status_display == 'Delivered' %}selected{% endif %}>Delivered</option>
+                                            </select>
+                                        </div>
+                                        
+                                        <button type="submit" class="update-button" name="submit" value="1" >Update Order Status</button>
+                                    </form>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-12">
+                                <p>
+                                    
+                                </p>
+                            </div>
+                            <div class="col-md-12">
+                                <p>
+                                            
+                                </p>
+                            </div>
+                            <div class="col-md-4">Payment Status : </div>
+                            <div class="col-md-4">
+                                {% if order.get_payment_status_display != "Pending" %}
+                                    <button class="btn btn-success btn-sm"> {{ order.get_payment_status_display }} </button>
+                                {% else %}
+                                    <form method="POST" >
+                                        {% csrf_token %}
+                                        <div class="form-group">
+                                            <input type="hidden" name="order_id" value="{{ order.id }}">
+                                        </div>
+
+                                        <div class="form-group">
+                                        
+                                        <select class="form-control" name="payment_status" id="payment_status">
+                                            <option value="Pending" {% if order.get_payment_status_display == 'Pending' %}selected{% endif %}>Pending</option>
+                                            <option value="Paid" {% if order.get_payment_status_display == 'Paid' %}selected{% endif %}>Paid</option>
+                                        </select>
+                                        </div>
+                                        <button type="submit" class="update-button" name="submit" value="2">Update Payment Status</button>
+                                    </form>
+                                    
+                                {% endif %}
+                            </div>
+                            <div>
+                                <p>
+                                    
+                                </p>
+                            </div>
+                            <div class="col-md-2">Payment Mode</div>
+                            <div class="col-md-2">
+                                {% if order.paym.get_payment_mode_display == "Online Payment"  %}
+                                    <button class="btn btn-success btn-sm"> {{ order.paym.get_payment_mode_display }} </button>
+                                {% elif order.paym.get_payment_mode_display == "COD" %}
+                                    <button class="btn btn-success btn-sm"> {{ order.paym.get_payment_mode_display }} </button>
+                                {% endif %}
+                             </div> 
+                        </div>
+                    </li>
+                    
+                {% endfor %}
+             </ul>
+        </div>
+    </div>
+</div>
+
+
+
+{% endblock %}
+{% block script %}
+
+{% endblock %}

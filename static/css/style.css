@@ -46,7 +46,7 @@ a:focus {
 
 
 .btn.custom-btn:hover {
-    color: #fbaf32;
+    color: #0986ec;
     background: transparent;
 }
 
@@ -272,7 +272,9 @@ a:focus {
 }
 
 .carousel .carousel-text h1 span {
-    color: #fbaf32;
+    color: #0986ec;
+    border-color: #0e7cfa;
+    text-decoration-color: #0e7cfa;
 }
 
 .carousel .carousel-text p {
@@ -541,7 +543,7 @@ a:focus {
     width: 100%;
     padding: 90px 0 60px 0;
     margin: 45px 0;
-    background: rgba(0, 0, 0, .04);
+    background: #4d464621;
 }
 
 .food .food-item {
@@ -864,7 +866,24 @@ a:focus {
 }
 
 
-
+.update-button {
+    /* Change the text color */
+   /* Add any other styling you want */
+   padding: 12px 25px;
+   font-family: 'Nunito', sans-serif;
+   font-size: 16px;
+   font-weight: 600;
+   background-color: #0E1FFA; /* Change the background color */
+   color: white;
+   border: 2px solid #0059ff;
+   border-radius: 5px;
+   transition: .5s;
+ }
+ .update-button:hover {
+   color: #0059ff;
+   background: transparent;/* Change the text color */
+   /* Add any other styling you want */
+ }
 
 /*******************************/
 /*********** Menu CSS **********/
